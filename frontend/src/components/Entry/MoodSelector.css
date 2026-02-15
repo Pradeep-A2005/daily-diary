@@ -1,0 +1,10 @@
+.mood-selector-container {
+    margin-bottom: var(--spacing-xl);
+}
+
+.mood-title {
+    text-align: center;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+    font-size: 1.25rem;
+}

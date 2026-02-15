@@ -1,0 +1,129 @@
+.calendar-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.month-navigation {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.month-navigation h2 {
+    margin: 0;
+    min-width: 200px;
+    text-align: center;
+}
+
+.month-navigation .btn {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    font-size: 1.25rem;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.weekday {
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    padding: var(--spacing-sm);
+}
+
+.calendar-day {
+    border: 2px solid var(--color-border);
+}
+
+.calendar-day.empty {
+    background: transparent;
+    border: none;
+    cursor: default;
+}
+
+.day-number {
+    font-weight: 500;
+}
+
+.mood-indicator {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.calendar-legend {
+    margin-top: var(--spacing-2xl);
+    padding: var(--spacing-lg);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-lg);
+}
+
+.calendar-legend h3 {
+    margin-bottom: var(--spacing-md);
+    font-size: 1rem;
+}
+
+.legend-items {
+    display: flex;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-sm);
+}
+
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: var(--spacing-lg);
+    }
+
+    .calendar-header {
+        flex-direction: column;
+    }
+
+    .month-navigation {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .month-navigation h2 {
+        font-size: 1.25rem;
+    }
+
+    .calendar-day {
+        font-size: 0.75rem;
+    }
+
+    .legend-items {
+        justify-content: center;
+    }
+}
