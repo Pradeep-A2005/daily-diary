@@ -9,18 +9,20 @@ const moods = [
     { value: 'tired', emoji: '😴', label: 'Tired' },
 ];
 
-const MoodSelector = ({ selectedMood, onMoodChange }) => {
+const MoodSelector = ({ selectedMood, onMoodChange, disabled = false }) => {
     return (
         <div className="mood-selector-container">
-            <h3 className="mood-title">How are you feeling today?</h3>
+            <h3 className="mood-title">{disabled ? 'Mood on this day:' : 'How are you feeling today?'}</h3>
             <div className="mood-selector">
                 {moods.map((mood) => (
                     <button
                         key={mood.value}
                         type="button"
                         className={`mood-btn ${selectedMood === mood.value ? 'active' : ''}`}
-                        onClick={() => onMoodChange(mood.value)}
+                        onClick={() => !disabled && onMoodChange(mood.value)}
                         title={mood.label}
+                        disabled={disabled}
+                        style={disabled ? { cursor: 'not-allowed', opacity: selectedMood === mood.value ? 1 : 0.5 } : {}}
                     >
                         {mood.emoji}
                     </button>

@@ -12,6 +12,7 @@ function App() {
         {/* All routes are now public - no authentication */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/entry" element={<EntryEditor />} />
+        <Route path="/entry/:date" element={<EntryEditor />} />
         <Route path="/calendar" element={<CalendarView />} />
         <Route path="/mood-history" element={<MoodChart />} />
 

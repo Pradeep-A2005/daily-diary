@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MoodSelector from './MoodSelector';
 import { entriesAPI, authAPI } from '../../services/api';
 import './EntryEditor.css';
@@ -15,8 +15,14 @@ const EntryEditor = () => {
     const [hasChanges, setHasChanges] = useState(false);
 
     const navigate = useNavigate();
+    const { date } = useParams(); // Get date from URL params
 
-    const today = new Date().toLocaleDateString('en-US', {
+    // Determine if we're viewing a past entry (read-only mode)
+    const today = new Date().toISOString().split('T')[0];
+    const isViewingPast = date && date !== today;
+    const displayDate = date || today;
+
+    const formattedDate = new Date(displayDate + 'T00:00:00').toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -24,22 +30,29 @@ const EntryEditor = () => {
     });
 
     useEffect(() => {
-        const loadTodayEntry = async () => {
+        const loadEntry = async () => {
             try {
-                const response = await entriesAPI.getToday();
+                let response;
+                if (date) {
+                    // Load specific date entry
+                    response = await entriesAPI.getByDate(date);
+                } else {
+                    // Load today's entry
+                    response = await entriesAPI.getToday();
+                }
                 setMood(response.data.mood);
                 setContent(response.data.content);
             } catch (err) {
                 if (err.response?.status !== 404) {
-                    setError('Failed to load today\'s entry');
+                    setError(isViewingPast ? 'No entry found for this date' : 'Failed to load today\'s entry');
                 }
             } finally {
                 setLoading(false);
             }
         };
 
-        loadTodayEntry();
-    }, []);
+        loadEntry();
+    }, [date, isViewingPast]);
 
     const saveEntry = useCallback(async () => {
         if (!mood || !content.trim()) {
@@ -106,34 +119,37 @@ const EntryEditor = () => {
         <div className="entry-editor-container">
             <div className="entry-header">
                 <div>
-                    <h1>Today's Entry</h1>
-                    <p className="text-muted">{today}</p>
+                    <h1>{isViewingPast ? 'Past Entry' : 'Today\'s Entry'}</h1>
+                    <p className="text-muted">{formattedDate}</p>
+                    {isViewingPast && <p className="text-muted" style={{ color: 'var(--color-warning)' }}>📖 Read-only mode</p>}
                 </div>
-                <div className="save-status">
-                    {saveStatus && <span className="status-text">{saveStatus}</span>}
-                    <button
-                        onClick={handleManualSave}
-                        className="btn btn-primary"
-                        disabled={saving || !mood || !content.trim()}
-                    >
-                        {saving ? 'Saving...' : 'Save Now'}
-                    </button>
-                </div>
+                {!isViewingPast && (
+                    <div className="save-status">
+                        {saveStatus && <span className="status-text">{saveStatus}</span>}
+                        <button
+                            onClick={handleManualSave}
+                            className="btn btn-primary"
+                            disabled={saving || !mood || !content.trim()}
+                        >
+                            {saving ? 'Saving...' : 'Save Now'}
+                        </button>
+                    </div>
+                )}
             </div>
 
             {error && <div className="alert alert-error">{error}</div>}
 
-            <MoodSelector selectedMood={mood} onMoodChange={handleMoodChange} />
+            <MoodSelector selectedMood={mood} onMoodChange={handleMoodChange} disabled={isViewingPast} />
 
             <div className="editor-container">
                 <textarea
                     className="input entry-textarea"
-                    placeholder="Write about your day... What happened? How did you feel? What are you grateful for?"
+                    placeholder={isViewingPast ? "No entry for this date" : "Write about your day... What happened? How did you feel? What are you grateful for?"}
                     value={content}
                     onChange={handleContentChange}
-                    disabled={!mood}
+                    disabled={!mood || isViewingPast}
                 />
-                {!mood && (
+                {!mood && !isViewingPast && (
                     <div className="editor-overlay">
                         <p>Please select your mood first</p>
                     </div>
