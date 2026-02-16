@@ -88,7 +88,7 @@ const EntryEditor = () => {
 
         const timer = setTimeout(() => {
             saveEntry();
-        }, 30000);
+        }, 2000); // Auto-save after 2 seconds of inactivity
 
         return () => clearTimeout(timer);
     }, [content, mood, hasChanges, saveEntry]);
